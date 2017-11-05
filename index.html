@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset=utf-8>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<title>box castle builder - by Laura Meskanen-Kundu</title>
+		<link rel="stylesheet" href="main.css">
+	</head>
+	<body>
+    <div id="container">
+      <button class="btn jscolor {valueElement:'chosen-value', onFineChange:'setCubeColor(this)'}">pick cube color</button>
+      <button id="createBox" class="btn" onclick="addCube()">create a box</button>
+      <button id="removeBox" class="btn btnRed" onclick="removeCube(selected)">delete a box</button>
+      </br>
+      <p>------------------------------------------------</p>
+      <button id="fillScreen" class="btn" onclick="lotsOfCubes()">generate cubes</button>
+      <button id="removeEverything" class="btn btnRed" onclick="removeEverything()">remove all</button>
+      <button id="dancingCubes" class="btn" onclick="dancingCubes()">dance y all</button>
+      <button id="stopDancing" class="btn" onclick="stopDancing()">stop dancing</button>
+    </div>
+    <canvas id="myCanvas"></canvas>
+		<script src="js/three.js"></script>
+    <script src="js/orbitControls.js"></script>
+    <script src="js/detector.js"></script>
+    <script src="js/jscolor.min.js"></script>
+    <script src="js/beatDetector.js"></script>
+		<script src="js/main.js"></script>
+	</body>
+</html>
