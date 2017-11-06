@@ -6,11 +6,12 @@ by Laura Meskanen-Kundu
 */
 
 //global variables
-var selected = null,
+var windowHalfX = window.innerWidth / 2,
+		windowHalfY = window.innerHeight / 2,
+    selected = null,
     canvas = document.getElementById('myCanvas'),
     dance = false,
-    beatCount = 0,
-    containerOffSet = document.getElementById('container').offsetHeight;
+    beatCount = 0;
 
 var scene,
     camera,
@@ -22,8 +23,7 @@ var scene,
     mouse,
     cubeColor,
     popSound,
-    song,
-    controls;
+    song;
 
 var objects = []; //array of movable cubes
 var counter = 0; //number of boxes created
@@ -32,26 +32,16 @@ var counter = 0; //number of boxes created
 function init(){
   renderer = new THREE.WebGLRenderer({canvas: document.getElementById('myCanvas')});
   renderer.setClearColor(0xfdfdfd);
-  renderer.setSize(window.innerWidth, window.innerHeight-containerOffSet);
   renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
   
   //camera is always at postion (0, 0, 0):
-  camera = new THREE.PerspectiveCamera(35, window.innerWidth/(window.innerHeight-containerOffSet), 0.1, 1000);
-  camera.position.z = 1;
+  camera = new THREE.PerspectiveCamera(35, window.innerWidth/window.innerHeight, 0.1, 1000);
+  camera.position.z = 0;
   
   //controls for swinging the camera around:
   //controls = new THREE.OrbitControls( camera, renderer.domElement );
   //controls.enableZoom = true; //way too dificult for user to understand
-  
-  //trackball:
-  /*controls = new THREE.TrackballControls( camera );
-  controls.rotateSpeed = 1.0;
-  controls.zoomSpeed = 1.2;
-  controls.panSpeed = 0.8;
-  controls.noZoom = false;
-  controls.noPan = false;
-  controls.staticMoving = true;
-  controls.dynamicDampingFactor = 0.3;*/
   
   //create the scene:
   scene = new THREE.Scene();
@@ -62,7 +52,6 @@ function init(){
   scene.add(ambientLight, pointLight);
   
   //creating a rayCaster that will catch objects so we can move them
-  //it is there but cast into the wrong place
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
 
@@ -81,11 +70,21 @@ function init(){
 
 //animation loop
 function animate() {
+  /*if(dance){
+    if(song.isOnBeat()){
+      if(beatCount == 5){
+        camera.position.x = 0;
+      }else{
+        camera.position.y = (Math.random()*10);
+      }
+      beatCount++;
+    }
+  }*/
   renderer.render(scene,camera);
   requestAnimationFrame( animate );
 }
 
-// movement
+// movement - please calibrate these values
 var xSpeed = 0.1;
 var ySpeed = 0.1;
 var zSpeed = 0.1;
@@ -95,7 +94,7 @@ document.addEventListener("keydown", onDocumentKeyDown, false);
 function onDocumentKeyDown(e) {
   var keyCode = event.which;
   if(selected != undefined || selected != null){
-    if(e.keyCode == 39) {      // moving to right
+    if(e.keyCode == 39) { // moving to right
       selected.object.position.x += xSpeed;
     }
     else if(e.keyCode == 37) { // moving left
@@ -114,6 +113,7 @@ function onDocumentKeyDown(e) {
       selected.object.position.z -= zSpeed;
     }
   }
+  
 }
 
 function onDocumentTouchStart( event ) {
@@ -122,20 +122,20 @@ function onDocumentTouchStart( event ) {
   event.clientX = event.touches[0].clientX;
   event.clientY = event.touches[0].clientY;
   onDocumentMouseDown( event );
+
 }
 
 function onDocumentMouseDown( event ) {
   event.preventDefault();
 
-  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-  mouse.y = - ( event.clientY / (window.innerHeight+containerOffSet) ) * 2 + 1;
+  mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+  mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
 
   raycaster.setFromCamera( mouse, camera );
 
   var intersects = raycaster.intersectObjects( objects );
-  if( event.clientY > containerOffSet ){
+  if( event.clientY > document.getElementById('container').offsetHeight ){
     if ( intersects.length > 0 ) {
-      console.log("in raycaster");
       popSound.play();
       selected = intersects[ 0 ];
       intersects[ 0 ].object.material.wireframe = true;
@@ -172,7 +172,7 @@ function addCube(){
   scene.add(objects[objects.length-1]);
 }
 
-//removes cubes from scene
+//removes cubes to scene
 function removeCube(selected) {
   if(selected != undefined || selected != null){
     console.log("in remove");
@@ -187,11 +187,48 @@ function setCubeColor(picker){
   cubeColor = '0x' + picker.toString();
 }
 
+/*function lotsOfCubes(){
+  var geometry = new THREE.BoxGeometry(1, 1, 1);
+  var material = new THREE.MeshLambertMaterial();
+  
+  for ( var i = 0; i < 50; i ++ ) {
+    var mesh = new THREE.Mesh( geometry, material );
+    mesh.material.color.setHex('0x'+getRandomColor());
+    mesh.position.x = ( Math.random() - 0.5 ) * 10;
+    mesh.position.y = ( Math.random() - 0.5 ) * 10;
+    mesh.position.z = ( Math.random() - 0.5 ) * 10;
+    mesh.updateMatrix();
+    mesh.matrixAutoUpdate = true;
+    scene.add( mesh );
+  }
+  
+  console.log(scene);
+}*/
+
 function removeEverything(){
   while(scene.children.length > 0){ 
     scene.remove(scene.children[0]); 
   }
 }
+
+/* Extra not yet done
+function dancingCubes(){
+  song = new stasilo.BeatDetector({
+         sens: 				      5.0,
+         visualizerFFTSize: 256, 
+         analyserFFTSize:   256, 
+         passFreq:          600,
+         url:               "sounds/Ryan_Little-Good_Grief.mp3" } );
+  dance = true;
+  console.log(song);
+}
+
+function stopDancing(){
+  if(sound != undefined || sound != null){
+    dance = false;
+    song.stop();
+  }
+}*/
 
 //random hexColor code:
 function getRandomColor() {
@@ -205,9 +242,11 @@ function getRandomColor() {
 
 //keep the scene looking good
 function onWindowResize() {
-  camera.aspect = window.innerWidth / (window.innerHeight-containerOffSet);
+  windowHalfX = window.innerWidth / 2;
+  windowHalfY = window.innerHeight / 2;
+  camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize( window.innerWidth, window.innerHeight-containerOffSet );
+  renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
 //give a warning if there is no WebGL
