@@ -8,23 +8,24 @@
 	</head>
 	<body>
     <div id="container">
-      <button class="btn jscolor {valueElement:'chosen-value', onFineChange:'setCubeColor(this)'}">pick cube color</button>
-      <button id="createBox" class="btn" onclick="addCube()">create a box</button>
-      <button id="removeBox" class="btn btnRed" onclick="removeCube(selected)">delete a box</button>
+      <button type="button" class="btn jscolor {valueElement:'chosen-value', onFineChange:'setCubeColor(this)'}">pick cube color</button>
+      <button type="button" id="createBox" class="btn" onclick="addCube()">create a box</button>
+      <button type="button" id="removeBox" class="btn btnRed" onclick="removeCube(selected)">delete a box</button>
+      <!--<button type="button" id="cameraReset" class="btn" onclick="cameraReset()">camera reset</button>-->
       </br>
       <p>------------------------------------------------</p>
-      <!--<button id="fillScreen" class="btn" onclick="lotsOfCubes()">generate cubes</button>-->
-      <button id="removeEverything" class="btn btnRed" onclick="removeEverything()">remove all</button>
+      <button type="button" id="fillScreen" class="btn" onclick="lotsOfCubes()">generate cubes</button>
+      <button type="button" id="removeEverything" class="btn btnRed" onclick="removeEverything()" disabled>remove all</button>
     
-      <!--<button id="dancingCubes" class="btn" onclick="dancingCubes()">dance y all</button>
-      <button id="stopDancing" class="btn" onclick="stopDancing()">stop dancing</button>-->
+      <button type="button" id="dancingCubes" class="btn" onclick="dancingCubes()" disabled>dance y all</button>
+      <!--<button type="button" id="stopDancing" class="btn" onclick="stopDancing()">stop dancing</button>-->
     </div>
     <canvas id="myCanvas"></canvas>
 		<script src="js/three.js"></script>
     <script src="js/trackballControls.js"></script>
     <script src="js/detector.js"></script>
     <script src="js/jscolor.min.js"></script>
-    <!--<script src="js/beatDetector.js"></script>-->
+    <script src="js/beatDetector.js"></script>
 		<script src="js/main.js"></script>
 	</body>
 </html>

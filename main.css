@@ -57,3 +57,13 @@ canvas {
   background-image: linear-gradient(to bottom, #fc963c, #d95a34);
   text-decoration: none;
 }
+
+.btn:disabled, .btnRed:disabled {
+  background: #ccc9c6;
+  background-image: -webkit-linear-gradient(top, #ccc9c6, #858180);
+  background-image: -moz-linear-gradient(top, #ccc9c6, #858180);
+  background-image: -ms-linear-gradient(top, #ccc9c6, #858180);
+  background-image: -o-linear-gradient(top, #ccc9c6, #858180);
+  background-image: linear-gradient(to bottom, #ccc9c6, #858180);
+  text-decoration: none;
+}

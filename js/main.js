@@ -3,6 +3,14 @@ Software Studies for Media Designers final project
 using guidlines at: http://softwarestudies.mlog.taik.fi/assignment/
 teacher: Markku Reunanen & Jukka Eerikäinen
 by Laura Meskanen-Kundu
+
+
+ _                 _           _ _     _           
+| |__   _____  __ | |__  _   _(_) | __| | ___ _ __ 
+| '_ \ / _ \ \/ / | '_ \| | | | | |/ _` |/ _ \ '__|
+| |_) | (_) >  <  | |_) | |_| | | | (_| |  __/ |   
+|_.__/ \___/_/\_\ |_.__/ \__,_|_|_|\__,_|\___|_|   
+                                                   
 */
 
 //global variables
@@ -36,22 +44,18 @@ function init(){
   renderer.setPixelRatio(window.devicePixelRatio);
   
   //camera is always at postion (0, 0, 0):
-  camera = new THREE.PerspectiveCamera(35, window.innerWidth/(window.innerHeight-containerOffSet), 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(35, window.innerWidth/(window.innerHeight-containerOffSet), 0.1, 10000);
   camera.position.z = 1;
   
-  //controls for swinging the camera around:
-  //controls = new THREE.OrbitControls( camera, renderer.domElement );
-  //controls.enableZoom = true; //way too dificult for user to understand
-  
   //trackball:
-  /*controls = new THREE.TrackballControls( camera );
+  controls = new THREE.TrackballControls( camera );
   controls.rotateSpeed = 1.0;
   controls.zoomSpeed = 1.2;
   controls.panSpeed = 0.8;
   controls.noZoom = false;
   controls.noPan = false;
   controls.staticMoving = true;
-  controls.dynamicDampingFactor = 0.3;*/
+  controls.dynamicDampingFactor = 0.3;
   
   //create the scene:
   scene = new THREE.Scene();
@@ -68,7 +72,7 @@ function init(){
 
   // Initialize audio
   popSound = new Audio('../sounds/pop.wav');
-  popSound.volume = 0.1;
+  popSound.volume = 1;
   
   //start the animation loop:
   requestAnimationFrame( animate );
@@ -81,6 +85,17 @@ function init(){
 
 //animation loop
 function animate() {
+  if(dance){
+    if(song.isOnBeat()){
+      if(beatCount == 5){
+        camera.position.x = 0;
+      }else{
+        camera.position.z = (Math.random()*15);
+      }
+      beatCount++;
+    }
+  }
+  controls.update();
   renderer.render(scene,camera);
   requestAnimationFrame( animate );
 }
@@ -167,8 +182,13 @@ function addCube(){
   console.log(objects);
   counter++;
   
-  console.log("selected is: " + selected);
+  if(objects.length > 0){
+    document.getElementById("removeEverything").disabled = false;
+    document.getElementById("dancingCubes").disabled = false;
+  }
   
+  console.log("selected is: " + selected);
+  camera.position.set (0, 0, 1);
   scene.add(objects[objects.length-1]);
 }
 
@@ -180,6 +200,10 @@ function removeCube(selected) {
     objects.splice(objects[selected],1)
     console.log(objects);
   }
+  if(objects.length<=0){
+    document.getElementById("removeEverything").disabled = true;
+    document.getElementById("dancingCubes").disabled = true;
+  }
 }
 
 //get color from picker:
@@ -189,7 +213,12 @@ function setCubeColor(picker){
 
 function removeEverything(){
   while(scene.children.length > 0){ 
-    scene.remove(scene.children[0]); 
+    scene.remove(scene.children[0]);
+    objects = [];
+  }
+  if(objects.length<=0 || scene.children.length<=0){
+    document.getElementById("removeEverything").disabled = true;
+    document.getElementById("dancingCubes").disabled = true;
   }
 }
 
@@ -202,6 +231,46 @@ function getRandomColor() {
   }
   return color;
 }
+
+function lotsOfCubes(){
+  var geometry = new THREE.BoxGeometry(1, 1, 1);
+  var material = new THREE.MeshLambertMaterial();
+  
+  for ( var i = 0; i < 50; i ++ ) {
+    var mesh = new THREE.Mesh( geometry, material );
+    mesh.material.color.setHex('0x'+getRandomColor());
+    mesh.position.x = ( Math.random() - 0.5 ) * 10;
+    mesh.position.y = ( Math.random() - 0.5 ) * 10;
+    mesh.position.z = ( Math.random() - 0.5 ) * -10;
+    mesh.updateMatrix();
+    mesh.matrixAutoUpdate = true;
+    camera.position.set (0, 0, -15);
+    scene.add( mesh );
+  }
+  if(scene.children.length > 0){
+    document.getElementById("removeEverything").disabled = false;
+    document.getElementById("dancingCubes").disabled = false;
+  }
+  
+  console.log(scene);
+}
+
+function dancingCubes(){
+  song = new stasilo.BeatDetector({
+         sens: 				      5.0,
+         visualizerFFTSize: 256, 
+         analyserFFTSize:   256, 
+         passFreq:          600,
+         url:               "sounds/Black_Ant_realest_year_9.mp3" } );
+  dance = true;
+  console.log(song);
+}
+
+/*bug in the three.js library to reset camera https://github.com/mrdoob/three.js/issues/821
+function cameraReset(){
+  camera.position.set = (0, 0, 1);
+  camera.rotation.set( 0, 0, 1 );
+}*/
 
 //keep the scene looking good
 function onWindowResize() {

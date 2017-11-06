@@ -259,11 +259,6 @@ if (typeof stasilo == 'undefined')
 				this.micStream.stop(); 
 			}
 		},
-    
-    stop: function(){
-      this.soundSource.stop(0);
-      this.micStream.stop();
-    },
 
 		play: function(offset)
 		{
