@@ -7,7 +7,7 @@ just oppen index.html and play around
 arrow keys are used for x and y coordinate movement of created boxes.
 
 > < = left (x)
-> = right (x)
+>> = right (x)
 ^ = up (y)
 v = down (y)
 z = inside (-z)
