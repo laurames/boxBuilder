@@ -6,11 +6,11 @@ just oppen index.html and play around
 ## How to use
 arrow keys are used for x and y coordinate movement of created boxes.
 
-> < = left (x)
->> = right (x)
-^ = up (y)
-v = down (y)
-z = inside (-z)
+> < = left (x),
+  > = right (x),
+^ = up (y),
+v = down (y),
+z = inside (-z),
 x = out (+z)
 
 ## Code
